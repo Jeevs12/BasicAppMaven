@@ -4,7 +4,7 @@
   <artifactId>app</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <configuration
+  <configuration>
      <failOnMissingWebXml>false</failOnMissingWebXml>
   </configuration>
   <dependencies>
