@@ -1,0 +1,103 @@
+* It is a file used to build a docker image using some instructions.
+
+* To build a image from dockerfile the base image needs to be mentioned using FROM command.
+
+Example :-
+-----------
+
+FROM ubuntu:18.04
+COPY . /app
+RUN make /app
+CMD python /app/app.py
+
+ *In the above example there are four instructions or commands to build a docker file, each 
+of these commands creates a seperate layer and building a series of layers is called as 
+docker image. As you can see FROM ubuntu:18.04, we are building the new image using base image
+as ubuntu:18:04.
+
+* Once you build above docker file, four layers have been created and when you create container 
+using this image the new writable layer for container will be created on top of these four layers.
+
+Writable layer on container:-
+-----------------------------
+
+* When you do any modifications on container such as add files,delete files etc everything will be happening
+on the container layer only, Once the container is deleted, the entire container layer also will be deleted.
+
+Check container size : docker ps -s
+
+Copy on write Strategy :
+-------------------------
+* For example we are having two docker files namely,
+
+Dockerfile1:-- Going to build a image namely - image1
+
+FROM ubuntu:18.04
+COPY . /app
+
+Dockerfile2:-- Going to build a image namely - image2
+
+FROM image2
+CMD /app/hello.sh
+
+* In Dockerfile1 it will create a image1 using base image as ubuntu:18.04 and add some files using COPY command, thn as you
+ can see in Dockerfile2 it uses the base image as image1 not ubuntu:18.04, So it requires the functionality of image1, So its
+ not required to write same instructions again in Dockerfile2. Using Copy on write strategy, we can share images or embed 
+ image with another image.
+
+Docker Build Workflow :-
+     command : docker build -t "imagename/tag" Dockerfile .
+    1. In the above command "Dockerfile" represents the dockerfile which contains the instructions for building the image,
+       "." represents the build context, Search for docker file in the current working directory.
+       "-t" represents the name of the image with tag.
+    2. Whenever you execute the docker build command in docker cli, The cli interprets the .dockerignore file and examine
+       any files needs to be excluded or included.
+    3. After interpretation, it will send the build context to docker deamon.
+    4. Thn, Separate layers will be created for each instruction and finally whole image will be created with ImageId.
+
+FROM :-
+    Command : FROM Base-image:tag
+    1. A valid docker file must start with FROM instruction, it initializes a new build stage and sets the Base Image for subsequent instructions.
+    2. Only ARG instruction can come before FROM,
+     Eg: -  ARG Tag=18.04
+            FROM ubuntu:${Tag}
+       * FROM instruction accepts the variables declared from ARG Instruction.
+    3. We can use more than one FROM command in the same dockerfile.
+
+RUN Command :-
+   Command : RUN <command> - shell form
+             RUN ["executable","param1","param2"]
+    1. It will run any commands on a newly created layer on top of the current image.
+    2. Most common commands used in RUN Instruction is "apt-get".
+       Eg:- RUN apt-get update
+            RUN apt-get install jenkins
+    3. Always use "apt-get-update" and "apt-get-install" on the single RUN command,because if we use in separate commands,
+       like 
+            ARG Tag=18.04
+            FROM ubuntu:${Tag}
+            RUN apt-get update                          ---->    Wrong
+            RUN apt-get install jenkins,
+       thn while first time we executing the build file it will update and install jenkins and packaged as a image. So for
+       the above 4 instructions, 4 layers will be created and all layers are in docker cache. Suppose if you need to install
+       tomcat using same docker file and modify the 4th instruction as RUN apt-get install jenkins tomcat, then the first 
+       3 instructions will not execute it uses the docker cache, so without update it will install the tomcat,
+
+            ARG Tag=18.04
+            FROM ubuntu:${Tag}
+            RUN apt-get update && apt-get install jenkins     ---->    Correct
+
+LABEL :
+    1. Its a key value pair file, which contains all the metadata about the image.
+    
+    Command : docker inspect imageid or imagename
+
+CMD :
+    CMD <command> - shell form, no need to provide executable it will take default executable /bin/bash or /bin/sh 
+    CMD ["executable","param1","param2"] - exec form, Here we can include executables inside double quotes.
+    eg:- CMD echo "hello"
+   
+    1. In a docker file only one time we can use CMD instruction, if we use more than once than the last CMD instruction will
+       take effect by skipping all other CMD.
+    2. These commands will be executed at the time of creating a container.
+   
+    
