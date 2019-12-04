@@ -99,5 +99,29 @@ CMD :
     1. In a docker file only one time we can use CMD instruction, if we use more than once than the last CMD instruction will
        take effect by skipping all other CMD.
     2. These commands will be executed at the time of creating a container.
-   
+    3. We can override the CMD instruction while running the container.
+       
+    For eg :-
+    
+            ARG Tag=18.04
+            FROM ubuntu:${Tag}
+            RUN apt-get update && apt-get install jenkins
+            CMD echo "Hello Dockerfile"
+       * When we run the container using the image build by the above docker file. It will print "Hello Dockerfile"
+       * We can override this cmd while running,
+     Command to override : docker run --name testing --rm curl/version1 echo "Hello DockerCompose".
+
+EXPOSE :
+   EXPOSE port/protocol
+   Eg:- EXPOSE 80/tcp - default it takes tcp and we can specify udp also while exposing the ports.
+   1. Actually it will not publish the ports to the host interfaces. We can publish the ports using -p flag while running the 
+      container, like docker run -p 8080:8080 imagename
+
+ENV :-
+   * It is used for setting the environment variable and value.
+   * It has two forms,
+             ENV <key> <value>
+             ENV <key>=<value> ...
+   * Second form is the most prefered one, We can declare many environment variables.
+         Eg :- ENV a="Hello"
     

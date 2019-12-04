@@ -1,0 +1,140 @@
+It is a configuration management tool which helps in managing or configuring the Infrastructure.
+
+Authentication between the Chef server and workstation and/or nodes is completed with public key encryption.
+This ensures that the Chef server only communicates with trusted machines
+
+Chef is a combination of chef-workstation,chef server and nodes.
+
+chef-workstation :-
+---------------------
+
+          * It is a place or a machine where we write cookbooks,recipes and other configuration files for Infrastructure setup.
+It is used to interact with chef-server and nodes. Later we can push the configurations to the chefserver, Knife is a command
+line tool used to interact with chef-server and it can also interact with chef-nodes using ssh.
+
+          * Chef deveopment kit must be installed on the workstation to use the chef commands in Ws
+          
+Two important work of workstation :-
+-------------------------------------
+
+          * Writing Cookbooks and Recipes that will later be pushed to the central Chef Server.
+          * Managing Nodes on the central Chef Server.
+
+Recipes :-
+----------
+          
+          * It is a simple ruby file with the extension .rb. Inside the file, it contains the collection of resources
+and the configuration information for a part of a system, where the chef will use this recipe to configure the node.
+
+
+Cookbooks :-
+------------
+
+          * Multiple recipes grouped together to form a cookbook.A Cookbook defines a scenario and contains everything 
+that is required to support that scenario:
+
+               1.Recipes
+               2.Attribute values
+               3.File distributions
+               4.Templates
+               5.Extensions to Chef, such as libraries, definitions, and custom resources
+
+Managing Nodes on the central chef server :-
+--------------------------------------------
+
+           * Adding a new node, deleting a node and modifying the node configurations to the central-chef server using  
+knife command line tool.
+
+
+Knife tool :-
+--------------
+
+           * It is a tool used to commnunicate with the central-chef server by adding,deleting a node,modifying node
+configurations and uploading cookbooks to the chef-server using knife tool.
+
+           * In simple terms,We can control the entire chef-server from the workstation using knife command line tool.
+
+
+Chef-Server :-
+---------------
+
+           * It acts a hub or repository for all the configuration data such as cookbooks and recipes.
+           * Chef-server contains cookbooks, policies applied to each node, and the metadata registered for each node.
+
+           * So the chef client will be installed on the nodes, So it will pull the configurations from the chef server 
+and it configure the nodes.
+
+
+Chef-Nodes :-
+---------------
+    
+           * It is a physical server or any virtual machine which is managed by the central-chef server.chef-client must be
+installed on the nodes to interact with chef-server.
+
+Working of chef -client :-
+-------------------------
+
+           * Chef client used to pull the configurations from chef-server and applies on node.
+           * It manages the initial registration of the Node to the central Chef Server.
+           * Periodic polling of the central Chef Server to fetch new configuration items, if any.
+
+
+
+Chef-Commands :-
+-----------------
+
+           * To run a recipe using chef -> chef-apply recipe-name,  Eg:- chef-apply Hello.rb, Where Hello.rb is the recipe.
+           * To generate a cookbook -> chef generate cookbook cookbook-name, Eg;- chef generate cookbook httpd-deploy, where
+httpd-deploy is the name of the cookbook.
+
+           * Template - we can refer these templates in recipe to reduce the no of configuration lines in recipes. Therefore 
+instead of writing all configuration in recipes, we can create or generate templates and we can use inside recipes.
+           * To generate a template -> chef generate template cookbook-name template-name, 
+           * To run a cookbook -> chef-client --local-mode --runlist 'recipe[cooknook-name]'
+
+
+Centrally managed chef server :-
+---------------------------------
+
+            * Hit the link -> manage.chef.io to enter the remote chef server provided by chef itself.
+            
+            * create organization in the chef server dashboard manually. Organization is the top-level entity for role-based 
+access control in the Chef Infra Server.
+    
+            * Thn download the starter kit from chef-server and unzip in the instance, we can do anywhere even in workstation
+also.
+            * command to unzip - unzip chef-starter.zip.
+            * cookbooks can be stored in public repository namely supermarket.chef.io and you can download the cookbooks
+using the knife command, 'knife cookbook site download cookbook-name'
+
+            * It will download the tar file, and we need to extract it.using the command, tar -xvf tarfile folder-name
+
+Uploading cookbook to the chef-server:-
+---------------------------------------
+             
+            * Command :- knife cookbook upload cookbook-name
+            * Once you uploaded the cookbook from workstation to chef-server, you can verify in the management console
+under the policy section, you will find the cookbook-name.
+
+Adding chef-node to chef server :-
+--------------------------------------------------------------------------
+
+            * Create any virtual machine and get the Ip address of that machine using ipconfig command.
+            * To add the chef-node in the chef-server we can use the knife bootstrap command,
+Command : knife bootstrap node-ipaddress --ssh-user username --ssh-password password --node-name 'somename for node'.
+
+* When you execute the above command, it will actually installs the chef client on the chef node and it will add
+the chef node in the chef server with the given node name. Therefore using chef-client, chef-nodes can interact with 
+chef-server.
+
+uploading cookbook to chef-node from chef-server:-
+--------------------------------------------------
+
+             * Since already cookbook pushed or upload from workstation to chef-server, the cookbooks will be present under
+policy section.
+             * To upload, go the node section and under Actions,click on the edit-run-list and add the cookbook,thn save
+the runlist.
+             * Simply run the command "chef-client" on the chef-node and all the configurations mentioned in the playbook,
+which has been saved as a runlist can be configured in the node machine, with the single command.
+                                  
+     
